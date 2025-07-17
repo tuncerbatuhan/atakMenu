@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Çift Dilli Carousel Menü</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: #111;
+    }
+
+    .carousel-container {
+      height: 90vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .carousel-item {
+      flex: 0 0 100vw;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #222;
+      color: white;
+    }
+
+    .carousel-item img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    }
+
+    .carousel-item h3 {
+      margin-top: 20px;
+    }
+
+    .menu-footer {
+      height: 10vh;
+      width: 100vw;
+      background-color:  #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #toggleLangBtn {
+      background: #0077cc;
+      color: white;
+      padding: 10px 25px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #toggleLangBtn:hover {
+      background: #005fa3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="carousel-container">
+    <div class="carousel-track" id="carouselTrack">
+
+    </div>
+  </div>
+
+  <div class="menu-footer">
+    <button id="toggleLangBtn">Finnish</button>
+  </div>
+
+  <script>
+    const englishMenu = [
+      { img: "images/menu1.png"},
+      { img: "images/menu2.png"},
+      { img: "images/menu3.png"},
+      { img: "images/menu4.png"},
+      { img: "images/menu5.png"},
+      { img: "images/menu6.png"},
+      { img: "images/menu7.png"},
+      { img: "images/menu8.png"},
+      { img: "images/menu9.png"},
+      { img: "images/menu10.png"},
+      { img: "images/menu11.png"},
+      { img: "images/menu12.png"},
+      { img: "images/menu13.png"},
+      { img: "images/menu14.png"}
+    ];
+
+    const finnishMenu = [
+      { img: "images/menu1.png"},
+      { img: "images/menuFinnish2.png"},
+      { img: "images/menuFinnish3.png"},
+      { img: "images/menuFinnish4.png"},
+      { img: "images/menuFinnish5.png"},
+      { img: "images/menuFinnish6.png"},
+      { img: "images/menuFinnish7.png"},
+      { img: "images/menuFinnish8.png"},
+      { img: "images/menuFinnish9.png"},
+      { img: "images/menuFinnish10.png"},
+      { img: "images/menuFinnish11.png"},
+      { img: "images/menuFinnish12.png"},
+      { img: "images/menuFinnish13.png"},
+      { img: "images/menuFinnish14.png"}
+    ];
+
+    const track = document.getElementById("carouselTrack");
+    const toggleLangBtn = document.getElementById("toggleLangBtn");
+
+    let currentIndex = 0;
+    let currentLanguage = "english";
+    let currentMenu = englishMenu;
+
+    function renderMenu(menu) {
+      track.innerHTML = "";
+      menu.forEach(item => {
+        const div = document.createElement("div");
+        div.classList.add("carousel-item");
+
+        const img = document.createElement("img");
+        img.src = item.img;
+        img.alt = item.title;
+
+        const h3 = document.createElement("h3");
+        h3.textContent = item.title;
+
+        div.appendChild(img);
+        div.appendChild(h3);
+        track.appendChild(div);
+      });
+
+      addSwipeListeners();
+      currentIndex = 0;
+      updateCarousel();
+    }
+
+    function updateCarousel() {
+      const offset = -currentIndex * window.innerWidth;
+      track.style.transform = `translateX(${offset}px)`;
+    }
+
+    toggleLangBtn.addEventListener("click", () => {
+      if (currentLanguage === "english") {
+        currentLanguage = "finnish";
+        currentMenu = finnishMenu;
+        toggleLangBtn.textContent = "English";
+      } else {
+        currentLanguage = "english";
+        currentMenu = englishMenu;
+        toggleLangBtn.textContent = "Finnish";
+      }
+      renderMenu(currentMenu);
+    });
+
+    window.addEventListener("resize", updateCarousel);
+
+  
+    let startX = 0;
+    let isDragging = false;
+
+    function handleTouchStart(e) {
+      startX = e.touches[0].clientX;
+    }
+
+    function handleTouchEnd(e) {
+      const endX = e.changedTouches[0].clientX;
+      const diff = endX - startX;
+      handleSwipe(diff);
+    }
+
+    function handleMouseDown(e) {
+      isDragging = true;
+      startX = e.clientX;
+    }
+
+    function handleMouseUp(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      const endX = e.clientX;
+      const diff = endX - startX;
+      handleSwipe(diff);
+    }
+
+    function handleSwipe(diff) {
+      if (Math.abs(diff) > 50) {
+        if (diff < 0 && currentIndex < currentMenu.length - 1) {
+          currentIndex++;
+        } else if (diff > 0 && currentIndex > 0) {
+          currentIndex--;
+        }
+        updateCarousel();
+      }
+    }
+
+    function addSwipeListeners() {
+      track.removeEventListener("touchstart", handleTouchStart);
+      track.removeEventListener("touchend", handleTouchEnd);
+      track.removeEventListener("mousedown", handleMouseDown);
+      track.removeEventListener("mouseup", handleMouseUp);
+
+      track.addEventListener("touchstart", handleTouchStart);
+      track.addEventListener("touchend", handleTouchEnd);
+      track.addEventListener("mousedown", handleMouseDown);
+      track.addEventListener("mouseup", handleMouseUp);
+    }
+
+    renderMenu(currentMenu);
+  </script>
+
+</body>
+</html>
