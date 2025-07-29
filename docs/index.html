@@ -11,6 +11,8 @@
       height: 100%;
       overflow: hidden;
       font-family: Arial, sans-serif;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
     }
 
     body {
@@ -82,9 +84,7 @@
 <body>
 
   <div class="carousel-container">
-    <div class="carousel-track" id="carouselTrack">
-
-    </div>
+    <div class="carousel-track" id="carouselTrack"></div>
   </div>
 
   <div class="menu-footer">
@@ -93,37 +93,37 @@
 
   <script>
     const englishMenu = [
-      { img: "images/menu1.png"},
-      { img: "images/menu2.png"},
-      { img: "images/menu3.png"},
-      { img: "images/menu4.png"},
-      { img: "images/menu5.png"},
-      { img: "images/menu6.png"},
-      { img: "images/menu7.png"},
-      { img: "images/menu8.png"},
-      { img: "images/menu9.png"},
-      { img: "images/menu10.png"},
-      { img: "images/menu11.png"},
-      { img: "images/menu12.png"},
-      { img: "images/menu13.png"},
-      { img: "images/menu14.png"}
+      { img: "./images/menu1.png" },
+      { img: "./images/menu2.png" },
+      { img: "./images/menu3.png" },
+      { img: "./images/menu4.png" },
+      { img: "./images/menu5.png" },
+      { img: "./images/menu6.png" },
+      { img: "./images/menu7.png" },
+      { img: "./images/menu8.png" },
+      { img: "./images/menu9.png" },
+      { img: "./images/menu10.png" },
+      { img: "./images/menu11.png" },
+      { img: "./images/menu12.png" },
+      { img: "./images/menu13.png" },
+      { img: "./images/menu14.png" }
     ];
 
     const finnishMenu = [
-      { img: "images/menu1.png"},
-      { img: "images/menuFinnish2.png"},
-      { img: "images/menuFinnish3.png"},
-      { img: "images/menuFinnish4.png"},
-      { img: "images/menuFinnish5.png"},
-      { img: "images/menuFinnish6.png"},
-      { img: "images/menuFinnish7.png"},
-      { img: "images/menuFinnish8.png"},
-      { img: "images/menuFinnish9.png"},
-      { img: "images/menuFinnish10.png"},
-      { img: "images/menuFinnish11.png"},
-      { img: "images/menuFinnish12.png"},
-      { img: "images/menuFinnish13.png"},
-      { img: "images/menuFinnish14.png"}
+      { img: "./images/menu1.png" },
+      { img: "./images/menuFinnish2.png" },
+      { img: "./images/menuFinnish3.png" },
+      { img: "./images/menuFinnish4.png" },
+      { img: "./images/menuFinnish5.png" },
+      { img: "./images/menuFinnish6.png" },
+      { img: "./images/menuFinnish7.png" },
+      { img: "./images/menuFinnish8.png" },
+      { img: "./images/menuFinnish9.png" },
+      { img: "./images/menuFinnish10.png" },
+      { img: "./images/menuFinnish11.png" },
+      { img: "./images/menuFinnish12.png" },
+      { img: "./images/menuFinnish13.png" },
+      { img: "./images/menuFinnish14.png" }
     ];
 
     const track = document.getElementById("carouselTrack");
@@ -141,10 +141,10 @@
 
         const img = document.createElement("img");
         img.src = item.img;
-        img.alt = item.title;
+        img.alt = "Menu Image";
 
         const h3 = document.createElement("h3");
-        h3.textContent = item.title;
+        h3.textContent = item.title || "";
 
         div.appendChild(img);
         div.appendChild(h3);
@@ -157,7 +157,7 @@
     }
 
     function updateCarousel() {
-      const offset = -currentIndex * window.innerWidth;
+      const offset = -currentIndex * document.documentElement.clientWidth;
       track.style.transform = `translateX(${offset}px)`;
     }
 
@@ -176,7 +176,6 @@
 
     window.addEventListener("resize", updateCarousel);
 
-  
     let startX = 0;
     let isDragging = false;
 
@@ -220,8 +219,8 @@
       track.removeEventListener("mousedown", handleMouseDown);
       track.removeEventListener("mouseup", handleMouseUp);
 
-      track.addEventListener("touchstart", handleTouchStart);
-      track.addEventListener("touchend", handleTouchEnd);
+      track.addEventListener("touchstart", handleTouchStart, { passive: false });
+      track.addEventListener("touchend", handleTouchEnd, { passive: false });
       track.addEventListener("mousedown", handleMouseDown);
       track.addEventListener("mouseup", handleMouseUp);
     }
